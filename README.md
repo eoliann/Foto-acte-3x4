@@ -31,11 +31,12 @@ Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie
 ## Galerie
 
 <p align="center">
-  <img src="./galerie/Foto-acte-3x4-Dashboard.png" alt="Foto acte 3x4" width="33%">
-  <img src="./galerie/Foto-acte-3x4-Dashboard-lucru.png" alt="Foto acte 3x4" width="33%">
-  <img src="./galerie/albert-dera-ILip77SbmOE-unsplash_6_poze_3x4.jpg" alt="Foto acte 3x4" width="33%">
+  <img src="./galerie/Foto-acte-3x4-Dashboard.png" alt="Foto acte 3x4" width="80%">
 </p>
-
+<p align="center">
+  <img src="./galerie/Foto-acte-3x4-Dashboard-lucru.png" alt="Foto acte 3x4" width="45%">
+  <img src="./galerie/albert-dera-ILip77SbmOE-unsplash_6_poze_3x4.jpg" alt="Foto acte 3x4" width="45%">
+</p>
 
 ## Descărcare
 
