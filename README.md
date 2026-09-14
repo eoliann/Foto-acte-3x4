@@ -1,3 +1,19 @@
+![Followers](https://img.shields.io/github/followers/eoliann?style=plastic&color=green)
+![Watchers](https://img.shields.io/github/watchers/eoliann/TuxPulse?style=plastic)
+![Stars](https://img.shields.io/github/stars/eoliann/TuxPulse?style=plastic)
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue?style=plastic)](https://www.paypal.com/donate/?hosted_button_id=PTH2EXUDS423S)
+[![Donate](https://img.shields.io/badge/Donate-Revolut-8A2BE2?style=plastic)](https://revolut.me/adriannm9)
+[![Donate](https://img.shields.io/badge/Donate-KoFi-green?style=plastic)](https://ko-fi.com/eoliann)
+
+![Release Date](https://img.shields.io/github/release-date/eoliann/Foto-acte-3x4?style=plastic)
+![Last Commit](https://img.shields.io/github/last-commit/eoliann/Foto-acte-3x4?style=plastic)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/eoliann/Foto-acte-3x4/total?style=plastic)
+
+![OS](https://img.shields.io/badge/OS-Windows-blue?style=plastic)
+![Lang](https://img.shields.io/badge/Lang-Rust-magenta?style=plastic)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=plastic)](LICENSE.md)
+
 # Foto acte 3x4
 
 Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie în 6 exemplare de 3x4 cm pe o coală foto de 15x10 cm.
