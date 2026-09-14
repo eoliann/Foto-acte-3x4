@@ -12,6 +12,15 @@ Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie
 - corectarea orientării EXIF pentru fotografiile realizate cu telefonul;
 - procesare complet locală, fără încărcarea fotografiei pe internet.
 
+## Galerie
+
+<p align="center">
+  <img src="./galerie/Foto-acte-3x4-Dashboard.png" alt="Foto acte 3x4" width="33%">
+  <img src="./galerie/Foto-acte-3x4-Dashboard-lucru.png" alt="Foto acte 3x4" width="33%">
+  <img src="./galerie/albert-dera-ILip77SbmOE-unsplash_6_poze_3x4.jpg" alt="Foto acte 3x4" width="33%">
+</p>
+
+
 ## Descărcare
 
 Descarcă arhiva pentru Windows din pagina [Releases](../../releases/latest), extrage `Foto-acte-3x4.exe` și pornește aplicația. Executabilul nu necesită instalare și nici Rust pe calculatorul utilizatorului.
