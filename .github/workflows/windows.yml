@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Download Windows artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: Foto-acte-3x4-windows
           path: release
@@ -66,7 +66,12 @@ jobs:
         run: Compress-Archive -LiteralPath "release\Foto-acte-3x4.exe" -DestinationPath "Foto-acte-3x4-windows.zip"
 
       - name: Publish GitHub Release
-        shell: pwsh
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" "Foto-acte-3x4-windows.zip" --generate-notes --title "Foto acte 3x4 ${{ github.ref_name }}"
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            gh release upload "${{ github.ref_name }}" "Foto-acte-3x4-windows.zip" --clobber
+          else
+            gh release create "${{ github.ref_name }}" "Foto-acte-3x4-windows.zip" --generate-notes --title "Foto acte 3x4 ${{ github.ref_name }}"
+          fi
