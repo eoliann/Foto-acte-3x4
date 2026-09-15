@@ -53,8 +53,9 @@ Windows poate afișa avertismentul SmartScreen pentru executabile noi care nu su
 1. Deschide `Foto-acte-3x4.exe`.
 2. Încarcă fotografia sau trage fișierul peste fereastră.
 3. Reglează zoom-ul și poziția până când capul și bustul sunt încadrate corect.
-4. Apasă **Salvează pentru print**.
-5. Printează JPEG-ul la **100% / Actual size**, fără opțiunea `Fit to page`.
+4. Reglează luminozitatea și contrastul, elimină și setează fundalul.
+5. Apasă **Salvează pentru print**.
+6. Printează JPEG-ul la **100% / Actual size**, fără opțiunea `Fit to page`.
 
 Aplicația nu detectează și nu modifică automat fața. Încadrarea manuală păstrează rezultatul previzibil și permite adaptarea la fiecare fotografie.
 
