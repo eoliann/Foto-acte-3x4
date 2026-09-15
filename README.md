@@ -23,6 +23,9 @@ Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie
 - export JPEG de 1772x1181 pixeli la 300 DPI;
 - șase fotografii de 354x472 pixeli, aproximativ 3x4 cm fiecare;
 - reglarea manuală a zoom-ului și poziției pentru o încadrare precisă;
+- ajustarea luminozității și contrastului;
+- eliminarea fundalului cu AI, complet offline;
+- fundal alb, gri deschis, albastru deschis sau orice culoare din paletă;
 - previzualizarea planșei înainte de salvare;
 - încărcare prin selector de fișiere sau drag-and-drop;
 - corectarea orientării EXIF pentru fotografiile realizate cu telefonul;
@@ -54,13 +57,15 @@ Windows poate afișa avertismentul SmartScreen pentru executabile noi care nu su
 
 Aplicația nu detectează și nu modifică automat fața. Încadrarea manuală păstrează rezultatul previzibil și permite adaptarea la fiecare fotografie.
 
+Pentru înlocuirea fundalului, selectează una dintre culorile predefinite sau opțiunea **Personalizat**. Prima procesare AI poate dura câteva secunde, în funcție de procesor; toate ajustările ulterioare sunt afișate imediat.
+
 ## Formate acceptate
 
 La intrare sunt acceptate JPEG, PNG, WebP și BMP. Rezultatul este salvat în format JPEG cu metadate de 300 DPI.
 
 ## Dezvoltare
 
-Este necesar [Rust](https://www.rust-lang.org/tools/install) 1.88 sau mai nou.
+Este necesar [Rust](https://www.rust-lang.org/tools/install) 1.94 sau mai nou.
 
 ```powershell
 cargo run
@@ -86,13 +91,15 @@ Executabilul independent va fi creat în `dist\Foto-acte-3x4.exe`.
 
 ## Publicarea unei versiuni
 
-Workflow-ul GitHub Actions construiește și testează proiectul la fiecare push și pull request. Un tag cu forma `v1.0.0` creează automat un GitHub Release care conține arhiva Windows:
+Workflow-ul GitHub Actions construiește și testează proiectul la fiecare push și pull request. Un tag cu forma `v1.1.0` creează automat un GitHub Release care conține arhiva Windows:
 
 ```powershell
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
 ## Tehnologii
 
-Interfața este realizată în Rust cu `eframe/egui`, iar procesarea imaginilor folosește crate-ul `image`.
+Interfața este realizată în Rust cu `eframe/egui`, procesarea imaginilor folosește crate-ul `image`, iar eliminarea fundalului folosește modelul MODNet prin runtime-ul `RTen`.
+
+Modelul AI este inclus în executabil și este distribuit conform licenței Apache-2.0. Proveniența și licența sa sunt documentate în [`assets/README.md`](assets/README.md).

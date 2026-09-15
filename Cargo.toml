@@ -1,10 +1,10 @@
 [package]
 name = "foto-acte"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2024"
 description = "Generator portabil de fotografii 3x4 cm pe coala 10x15 cm"
 readme = "README.md"
-rust-version = "1.88"
+rust-version = "1.94"
 publish = false
 
 [dependencies]
@@ -12,6 +12,7 @@ eframe = { version = "0.32", default-features = false, features = ["default_font
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp", "bmp"] }
 jpeg-encoder = "0.6"
 rfd = "0.15"
+rten = { version = "0.26", default-features = false, features = ["onnx_format"] }
 
 [profile.release]
 lto = "thin"
