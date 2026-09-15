@@ -9,6 +9,7 @@
 ![Release Date](https://img.shields.io/github/release-date/eoliann/Foto-acte-3x4?style=plastic)
 ![Last Commit](https://img.shields.io/github/last-commit/eoliann/Foto-acte-3x4?style=plastic)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/eoliann/Foto-acte-3x4/total?style=plastic)
+[![Downloads latest](https://img.shields.io/github/downloads/eoliann/Foto-acte-3x4/latest/total?style=plastic)](https://github.com/eoliann/Foto-acte-3x4/releases/latest/download/Foto-acte-3x4.exe)
 
 ![OS](https://img.shields.io/badge/OS-Windows-blue?style=plastic)
 ![Lang](https://img.shields.io/badge/Lang-Rust-magenta?style=plastic)
