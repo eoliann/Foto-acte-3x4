@@ -1,6 +1,6 @@
 ![Followers](https://img.shields.io/github/followers/eoliann?style=plastic&color=green)
-![Watchers](https://img.shields.io/github/watchers/eoliann/TuxPulse?style=plastic)
-![Stars](https://img.shields.io/github/stars/eoliann/TuxPulse?style=plastic)
+![Watchers](https://img.shields.io/github/watchers/eoliann/Foto-acte-3x4?style=plastic)
+![Stars](https://img.shields.io/github/stars/eoliann/Foto-acte-3x4?style=plastic)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue?style=plastic)](https://www.paypal.com/donate/?hosted_button_id=PTH2EXUDS423S)
 [![Donate](https://img.shields.io/badge/Donate-Revolut-8A2BE2?style=plastic)](https://revolut.me/adriannm9)
