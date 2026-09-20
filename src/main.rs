@@ -6,8 +6,8 @@ use std::{
 };
 
 use eframe::egui::{
-    self, Color32, ColorImage, Context, RichText, Slider, Stroke, TextureHandle, TextureOptions,
-    Vec2,
+    self, Color32, ColorImage, Context, FontId, RichText, Slider, Stroke, TextStyle, TextureHandle,
+    TextureOptions, Vec2,
 };
 use image::{
     DynamicImage, GenericImageView, GrayImage, ImageDecoder, ImageReader, Luma, RgbImage,
@@ -26,8 +26,8 @@ const MODNET_MODEL: &[u8] = include_bytes!("../assets/modnet.onnx");
 fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1100.0, 720.0])
-            .with_min_inner_size([820.0, 600.0])
+            .with_inner_size([1120.0, 860.0])
+            .with_min_inner_size([860.0, 700.0])
             .with_title("Foto acte 3x4 by eoliann on GitHub "),
         ..Default::default()
     };
@@ -388,10 +388,18 @@ impl eframe::App for PhotoApp {
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
             ui.add_space(8.0);
             ui.horizontal(|ui| {
-                ui.heading("Foto acte 3x4");
-                ui.label(format!("v{}", env!("CARGO_PKG_VERSION")));
+                ui.label(
+                    RichText::new("Foto acte 3x4")
+                        .heading()
+                        .color(Color32::BLACK),
+                );
+                ui.label(
+                    RichText::new(format!("v{}", env!("CARGO_PKG_VERSION"))).color(Color32::BLACK),
+                );
                 ui.separator();
-                ui.label("6 fotografii pe coală 15x10 cm • 300 DPI");
+                ui.label(
+                    RichText::new("6 fotografii pe coală 15x10 cm • 300 DPI").color(Color32::BLACK),
+                );
             });
             ui.add_space(8.0);
         });
@@ -413,26 +421,37 @@ impl eframe::App for PhotoApp {
                     }
                     ui.label(
                         RichText::new("Poți și să tragi fotografia peste fereastră.")
-                            .small()
-                            .weak(),
+                            .color(Color32::BLACK),
                     );
 
                     ui.add_space(22.0);
-                    ui.heading("Încadrare");
-                    ui.label("Păstrează capul și bustul în interiorul fotografiei.");
+                    ui.label(RichText::new("Încadrare").heading().color(Color32::BLACK));
+                    ui.label(
+                        RichText::new("Păstrează capul și bustul în interiorul fotografiei.")
+                            .color(Color32::BLACK),
+                    );
                     ui.add_enabled_ui(self.source.is_some(), |ui| {
                         let mut changed = false;
                         changed |= ui
-                            .add(Slider::new(&mut self.zoom, 1.0..=3.0).text("Zoom"))
+                            .add(
+                                Slider::new(&mut self.zoom, 1.0..=3.0)
+                                    .text("Zoom")
+                                    .text_color(Color32::BLACK),
+                            )
                             .changed();
                         changed |= ui
                             .add(
                                 Slider::new(&mut self.offset_x, -1.0..=1.0)
-                                    .text("Stânga / dreapta"),
+                                    .text("Stânga / dreapta")
+                                    .text_color(Color32::BLACK),
                             )
                             .changed();
                         changed |= ui
-                            .add(Slider::new(&mut self.offset_y, -1.0..=1.0).text("Sus / jos"))
+                            .add(
+                                Slider::new(&mut self.offset_y, -1.0..=1.0)
+                                    .text("Sus / jos")
+                                    .text_color(Color32::BLACK),
+                            )
                             .changed();
                         if ui.button("Resetează încadrarea").clicked() {
                             self.zoom = 1.0;
@@ -446,14 +465,22 @@ impl eframe::App for PhotoApp {
                     });
 
                     ui.add_space(18.0);
-                    ui.heading("Imagine");
+                    ui.label(RichText::new("Imagine").heading().color(Color32::BLACK));
                     ui.add_enabled_ui(self.source.is_some(), |ui| {
                         let mut changed = false;
                         changed |= ui
-                            .add(Slider::new(&mut self.brightness, -100..=100).text("Luminozitate"))
+                            .add(
+                                Slider::new(&mut self.brightness, -100..=100)
+                                    .text("Luminozitate")
+                                    .text_color(Color32::BLACK),
+                            )
                             .changed();
                         changed |= ui
-                            .add(Slider::new(&mut self.contrast, -100.0..=100.0).text("Contrast"))
+                            .add(
+                                Slider::new(&mut self.contrast, -100.0..=100.0)
+                                    .text("Contrast")
+                                    .text_color(Color32::BLACK),
+                            )
                             .changed();
                         if ui.button("Resetează luminozitatea").clicked() {
                             self.brightness = 0;
@@ -466,36 +493,47 @@ impl eframe::App for PhotoApp {
                     });
 
                     ui.add_space(18.0);
-                    ui.heading("Fundal");
+                    ui.label(RichText::new("Fundal").heading().color(Color32::BLACK));
                     ui.label(
-                        "Înlocuirea folosește AI local; fotografia nu părăsește calculatorul.",
+                        RichText::new(
+                            "Înlocuirea folosește AI local; fotografia nu părăsește calculatorul.",
+                        )
+                        .color(Color32::BLACK),
                     );
                     ui.add_enabled_ui(self.source.is_some(), |ui| {
                         let previous = self.background;
-                        ui.radio_value(&mut self.background, Background::Original, "Original");
+                        ui.radio_value(
+                            &mut self.background,
+                            Background::Original,
+                            RichText::new("Original").color(Color32::BLACK),
+                        );
                         ui.horizontal_wrapped(|ui| {
-                            ui.radio_value(&mut self.background, Background::White, "Alb");
+                            ui.radio_value(
+                                &mut self.background,
+                                Background::White,
+                                RichText::new("Alb").color(Color32::BLACK),
+                            );
                             ui.radio_value(
                                 &mut self.background,
                                 Background::LightGray,
-                                "Gri deschis",
+                                RichText::new("Gri deschis").color(Color32::BLACK),
                             );
                             ui.radio_value(
                                 &mut self.background,
                                 Background::LightBlue,
-                                "Albastru deschis",
+                                RichText::new("Albastru deschis").color(Color32::BLACK),
                             );
                             ui.radio_value(
                                 &mut self.background,
                                 Background::Custom,
-                                "Personalizat",
+                                RichText::new("Personalizat").color(Color32::BLACK),
                             );
                         });
 
                         let mut color_changed = false;
                         if self.background == Background::Custom {
                             ui.horizontal(|ui| {
-                                ui.label("Culoare:");
+                                ui.label(RichText::new("Culoare:").color(Color32::BLACK));
                                 color_changed = ui
                                     .color_edit_button_srgb(&mut self.custom_background)
                                     .changed();
@@ -516,7 +554,10 @@ impl eframe::App for PhotoApp {
                         AiState::Running => {
                             ui.horizontal(|ui| {
                                 ui.spinner();
-                                ui.label("AI procesează fotografia...");
+                                ui.label(
+                                    RichText::new("AI procesează fotografia...")
+                                        .color(Color32::BLACK),
+                                );
                             });
                         }
                         AiState::Ready => {
@@ -571,11 +612,12 @@ impl eframe::App for PhotoApp {
 
                     ui.add_space(16.0);
                     ui.separator();
-                    ui.label(RichText::new(&self.status).small());
+                    ui.label(RichText::new(&self.status).small().color(Color32::BLACK));
                     ui.label(
                         RichText::new("La imprimare: mărime reală / 100%, fără «Fit to page».")
                             .small()
-                            .strong(),
+                            .strong()
+                            .color(Color32::BLACK),
                     );
                     ui.add_space(10.0);
                 });
@@ -583,8 +625,15 @@ impl eframe::App for PhotoApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.add_space(14.0);
-            ui.heading("Previzualizare coală");
-            ui.label("Fiecare fotografie are 3x4 cm; spațiile albe permit tăierea.");
+            ui.label(
+                RichText::new("Previzualizare coală")
+                    .heading()
+                    .color(Color32::BLACK),
+            );
+            ui.label(
+                RichText::new("Fiecare fotografie are 3x4 cm; spațiile albe permit tăierea.")
+                    .color(Color32::BLACK),
+            );
             ui.add_space(10.0);
 
             if let Some(texture) = &self.sheet_texture {
@@ -619,7 +668,7 @@ impl eframe::App for PhotoApp {
                     egui::Align2::CENTER_CENTER,
                     "Previzualizarea va apărea aici",
                     egui::FontId::proportional(18.0),
-                    Color32::from_gray(100),
+                    Color32::BLACK,
                 );
             }
         });
@@ -965,6 +1014,23 @@ fn configure_style(ctx: &Context) {
     style.spacing.item_spacing = Vec2::new(9.0, 9.0);
     style.visuals.panel_fill = Color32::from_rgb(248, 248, 246);
     style.visuals.window_fill = Color32::from_rgb(248, 248, 246);
+    // Textele șterse („weak") sunt negre, nu gri. Restul textelor primesc
+    // negru explicit acolo unde fundalul este deschis; butoanele și
+    // câmpurile de valori își păstrează textul deschis pe fundal închis.
+    style.visuals.weak_text_color = Some(Color32::BLACK);
+    // Fonturi mai mari, lizibile fără efort.
+    style
+        .text_styles
+        .insert(TextStyle::Heading, FontId::proportional(22.0));
+    style
+        .text_styles
+        .insert(TextStyle::Body, FontId::proportional(16.0));
+    style
+        .text_styles
+        .insert(TextStyle::Button, FontId::proportional(15.0));
+    style
+        .text_styles
+        .insert(TextStyle::Small, FontId::proportional(13.0));
     ctx.set_style(style);
 }
 

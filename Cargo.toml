@@ -1,6 +1,6 @@
 [package]
 name = "foto-acte"
-version = "1.1.1"
+version = "1.1.2"
 edition = "2024"
 description = "Generator portabil de fotografii 3x4 cm pe coala 10x15 cm"
 readme = "README.md"
