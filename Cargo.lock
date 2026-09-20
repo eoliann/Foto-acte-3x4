@@ -876,7 +876,7 @@ dependencies = [
 
 [[package]]
 name = "foto-acte"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "eframe",
  "image",

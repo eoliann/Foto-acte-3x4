@@ -28,12 +28,12 @@ fn main() -> eframe::Result {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1100.0, 720.0])
             .with_min_inner_size([820.0, 600.0])
-            .with_title("Foto acte 3x4 by eoliann"),
+            .with_title("Foto acte 3x4 by eoliann on GitHub "),
         ..Default::default()
     };
 
     eframe::run_native(
-        "Foto acte 3x4 by eoliann",
+        "Foto acte 3x4 by eoliann on GitHub",
         options,
         Box::new(|cc| Ok(Box::new(PhotoApp::new(cc)))),
     )
@@ -55,6 +55,9 @@ struct PhotoApp {
     ai_state: AiState,
     inference_tx: mpsc::Sender<InferenceJob>,
     inference_rx: mpsc::Receiver<InferenceResult>,
+    printing: bool,
+    print_tx: mpsc::Sender<String>,
+    print_rx: mpsc::Receiver<String>,
     status: String,
 }
 
@@ -112,6 +115,7 @@ impl PhotoApp {
         let (inference_tx, job_rx) = mpsc::channel();
         let (result_tx, inference_rx) = mpsc::channel();
         start_inference_worker(job_rx, result_tx, cc.egui_ctx.clone());
+        let (print_tx, print_rx) = mpsc::channel();
         Self {
             source: None,
             source_path: None,
@@ -128,6 +132,9 @@ impl PhotoApp {
             ai_state: AiState::Idle,
             inference_tx,
             inference_rx,
+            printing: false,
+            print_tx,
+            print_rx,
             status: "Încarcă o fotografie pentru a începe.".to_owned(),
         }
     }
@@ -223,6 +230,83 @@ impl PhotoApp {
         }
     }
 
+    fn receive_print_results(&mut self) {
+        while let Ok(message) = self.print_rx.try_recv() {
+            self.printing = false;
+            self.status = message;
+        }
+    }
+
+    fn print_direct(&mut self, ctx: &Context) {
+        if self.printing {
+            return;
+        }
+        let Some(source) = &self.source else {
+            return;
+        };
+
+        if self.background != Background::Original && self.mask.is_none() {
+            self.status =
+                "Așteaptă finalizarea eliminării fundalului înainte de printare.".to_owned();
+            return;
+        }
+
+        let portrait = render_portrait(
+            source,
+            self.mask.as_ref(),
+            self.settings(),
+            PHOTO_WIDTH,
+            PHOTO_HEIGHT,
+        );
+        let sheet = compose_sheet(&portrait, SHEET_WIDTH, SHEET_HEIGHT);
+
+        let mut temp_dir = std::env::temp_dir();
+        temp_dir.push("Foto-acte-3x4");
+        if let Err(error) = std::fs::create_dir_all(&temp_dir) {
+            self.status = format!("Nu s-a putut pregăti fișierul pentru print: {error}");
+            return;
+        }
+
+        let stem = self
+            .source_path
+            .as_deref()
+            .and_then(Path::file_stem)
+            .and_then(|name| name.to_str())
+            .unwrap_or("coala");
+        let timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|duration| duration.as_secs())
+            .unwrap_or(0);
+        let file_name = format!("{stem}_6_poze_3x4_print_{timestamp}.jpg");
+        let path = temp_dir.join(file_name);
+
+        if let Err(error) = save_jpeg_300_dpi(&sheet, &path) {
+            self.status = format!("Fișierul pentru print nu a putut fi creat: {error}");
+            return;
+        }
+
+        // Dialogul de printare este afișat de un script PowerShell care folosește
+        // .NET (System.Windows.Forms.PrintDialog + System.Drawing.Printing).
+        // Metoda clasică `Start-Process -Verb Print` nu funcționează când
+        // aplicația implicită pentru JPG este una UWP (Photos), care nu
+        // înregistrează verbul „print”, deci dialogul nu apărea deloc.
+        let script_path = temp_dir.join("print_coala.ps1");
+        if let Err(error) = std::fs::write(&script_path, PRINT_SCRIPT) {
+            self.status = format!("Scriptul de printare nu a putut fi creat: {error}");
+            return;
+        }
+
+        self.printing = true;
+        self.status = "Se deschide dialogul de printare…".to_owned();
+        let result_tx = self.print_tx.clone();
+        let repaint = ctx.clone();
+        std::thread::spawn(move || {
+            let message = run_print_dialog(&script_path, &path);
+            let _ = result_tx.send(message);
+            repaint.request_repaint();
+        });
+    }
+
     fn settings(&self) -> RenderSettings {
         RenderSettings {
             zoom: self.zoom,
@@ -289,6 +373,7 @@ fn open_oriented(path: &Path) -> image::ImageResult<DynamicImage> {
 impl eframe::App for PhotoApp {
     fn update(&mut self, ctx: &Context, _frame: &mut eframe::Frame) {
         self.receive_inference_results(ctx);
+        self.receive_print_results();
 
         if let Some(path) = ctx.input(|input| {
             input
@@ -464,6 +549,24 @@ impl eframe::App for PhotoApp {
                         .inner
                     {
                         self.save_dialog();
+                    }
+
+                    ui.add_space(8.0);
+                    let print_label = if self.printing {
+                        "Se deschide dialogul…"
+                    } else {
+                        "Printează direct"
+                    };
+                    let print = egui::Button::new(RichText::new(print_label).strong())
+                        .fill(Color32::from_rgb(46, 125, 50));
+                    let can_print = can_save && !self.printing;
+                    if ui
+                        .add_enabled_ui(can_print, |ui| {
+                            ui.add_sized([ui.available_width(), 44.0], print).clicked()
+                        })
+                        .inner
+                    {
+                        self.print_direct(ctx);
                     }
 
                     ui.add_space(16.0);
@@ -715,6 +818,142 @@ fn save_jpeg_300_dpi(image: &RgbImage, path: &Path) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
+/// Script PowerShell care afișează dialogul nativ de printare și tipărește
+/// coala 10x15 la scară reală (hârtie 4x6 inch, landscape, margini zero).
+/// Verbul clasic `Start-Process -Verb Print` nu poate fi folosit, deoarece pe
+/// Windows 10/11 aplicația implicită pentru JPG este una UWP (Photos), care nu
+/// înregistrează verbul „print”, iar dialogul nu apărea deloc.
+const PRINT_SCRIPT: &str = r#"param([Parameter(Mandatory = $true)][string]$ImagePath)
+$ErrorActionPreference = 'Stop'
+try {
+    Add-Type -AssemblyName System.Drawing
+    Add-Type -AssemblyName System.Windows.Forms
+    $script:printImage = [System.Drawing.Image]::FromFile($ImagePath)
+    $doc = New-Object System.Drawing.Printing.PrintDocument
+    $doc.DocumentName = 'Foto acte 3x4 - coala 10x15'
+    $paper = New-Object System.Drawing.Printing.PaperSize('Foto 10x15', 400, 600)
+    try { $doc.DefaultPageSettings.PaperSize = $paper } catch { }
+    $doc.DefaultPageSettings.Landscape = $true
+    $doc.DefaultPageSettings.Margins = New-Object System.Drawing.Printing.Margins(0, 0, 0, 0)
+    try { $doc.DefaultPageSettings.Color = $true } catch { }
+    $handler = {
+        param($sender, $e)
+        $e.Graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+        $e.Graphics.DrawImage($script:printImage, $e.PageBounds)
+        $e.HasMorePages = $false
+    }
+    $doc.add_PrintPage($handler)
+    $dlg = New-Object System.Windows.Forms.PrintDialog
+    $dlg.UseEXDialog = $true
+    $dlg.Document = $doc
+    $result = $dlg.ShowDialog()
+    if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+        $doc.Print()
+        Write-Output 'PRINT_OK'
+    } else {
+        Write-Output 'PRINT_CANCELLED'
+    }
+} catch {
+    Write-Output ('PRINT_ERROR: ' + $_.Exception.Message)
+} finally {
+    if ($script:printImage) { $script:printImage.Dispose() }
+    if ($doc) { $doc.Dispose() }
+    if ($dlg) { $dlg.Dispose() }
+}
+"#;
+
+/// Ascunde fereastra de consolă a unui proces copil (Windows).
+/// Fără `CREATE_NO_WINDOW`, `powershell.exe` — aplicație de consolă —
+/// deschide o fereastră neagră care rămâne deasupra dialogului de printare.
+/// Ferestrele GUI create de copil (dialogul WinForms) apar normal.
+fn hide_console_window(command: &mut std::process::Command) {
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x0800_0000); // CREATE_NO_WINDOW
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = command;
+    }
+}
+
+fn run_print_dialog(script_path: &Path, image_path: &Path) -> String {
+    let mut command = std::process::Command::new("powershell");
+    command.args([
+        "-NoProfile",
+        "-STA",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        &script_path.to_string_lossy(),
+        "-ImagePath",
+        &image_path.to_string_lossy(),
+    ]);
+    hide_console_window(&mut command);
+    let output = command.output();
+
+    match output {
+        Err(error) => open_with_default_viewer(
+            image_path,
+            &format!("dialogul de printare nu a putut porni ({error})"),
+        ),
+        Ok(output) => {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            if stdout.lines().any(|line| line.trim() == "PRINT_OK") {
+                format!(
+                    "Coala a fost trimisă la imprimantă. Fișierul rămâne salvat la: {}",
+                    image_path.display()
+                )
+            } else if stdout.lines().any(|line| line.trim() == "PRINT_CANCELLED") {
+                "Printare anulată. Poți redeschide dialogul oricând.".to_owned()
+            } else if let Some(error) = stdout
+                .lines()
+                .find_map(|line| line.strip_prefix("PRINT_ERROR:"))
+            {
+                open_with_default_viewer(
+                    image_path,
+                    &format!("dialogul a eșuat ({})", error.trim()),
+                )
+            } else if output.status.success() {
+                "Dialogul de printare a fost închis.".to_owned()
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                open_with_default_viewer(
+                    image_path,
+                    &format!(
+                        "dialogul a eșuat (cod {:?}): {}",
+                        output.status.code(),
+                        stderr.trim()
+                    ),
+                )
+            }
+        }
+    }
+}
+
+/// Soluție de rezervă: deschide imaginea în aplicația implicită din Windows
+/// (verb „open”, funcționează și cu aplicații UWP precum Photos), de unde
+/// utilizatorul poate printa manual (Print / Ctrl+P, hârtie 10x15, 100%).
+fn open_with_default_viewer(image_path: &Path, reason: &str) -> String {
+    match std::process::Command::new("explorer")
+        .arg(image_path)
+        .spawn()
+    {
+        Ok(_) => format!(
+            "Nu am putut deschide direct dialogul de printare, {reason}. Am deschis imaginea \
+             în aplicația implicită: {}. De acolo folosește Print (Ctrl+P), hârtie 10x15 cm, \
+             mărime reală / 100%.",
+            image_path.display()
+        ),
+        Err(error) => format!(
+            "Printarea directă nu a funcționat ({reason}; nici imaginea nu s-a putut deschide: \
+             {error}). Fișierul este salvat la: {}. Deschide-l manual și printează-l la 100%.",
+            image_path.display()
+        ),
+    }
+}
+
 fn color_image(image: &DynamicImage) -> ColorImage {
     let rgba = image.to_rgba8();
     let size = [rgba.width() as usize, rgba.height() as usize];
@@ -833,5 +1072,18 @@ mod tests {
             }
         }
         assert_eq!(*sheet.get_pixel(0, 0), image::Rgb([255, 255, 255]));
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn hidden_powershell_still_captures_output() {
+        let mut command = std::process::Command::new("powershell");
+        command.args(["-NoProfile", "-Command", "Write-Output PRINT_OK"]);
+        super::hide_console_window(&mut command);
+        let output = command.output().expect("powershell should run");
+
+        assert!(output.status.success());
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        assert!(stdout.lines().any(|line| line.trim() == "PRINT_OK"));
     }
 }

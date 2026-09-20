@@ -93,11 +93,11 @@ Executabilul independent va fi creat în `dist\Foto-acte-3x4.exe`.
 
 ## Publicarea unei versiuni
 
-Workflow-ul GitHub Actions construiește și testează proiectul la fiecare push și pull request. Un tag cu forma `v1.1.0` creează automat un GitHub Release care conține arhiva Windows:
+Workflow-ul GitHub Actions construiește și testează proiectul la fiecare push și pull request. Un tag cu forma `v1.1.1` creează automat un GitHub Release care conține arhiva Windows:
 
 ```powershell
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.1.1
+git push origin v1.1.1
 ```
 
 ## Tehnologii
