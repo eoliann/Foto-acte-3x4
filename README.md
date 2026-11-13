@@ -15,6 +15,8 @@
 ![Lang](https://img.shields.io/badge/Lang-Rust-magenta?style=plastic)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=plastic)](LICENSE.md)
 
+<p align="center"><img src=".github/downloads/chart.svg" alt="Progres descărcări" width="760"></p>
+
 # Foto acte 3x4
 
 Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie în 6 exemplare de 3x4 cm pe o coală foto de 15x10 cm.
