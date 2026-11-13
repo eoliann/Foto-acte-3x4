@@ -37,22 +37,22 @@
 
 # Foto acte 3x4
 
-Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie în 6 exemplare de 3x4 cm pe o coală foto de 15x10 cm.
+A portable, offline Windows desktop app that arranges a photo into 6 copies of 3x4 cm on a 15x10 cm photo sheet.
 
-## Funcționalități
+## Features
 
-- export JPEG de 1772x1181 pixeli la 300 DPI;
-- șase fotografii de 354x472 pixeli, aproximativ 3x4 cm fiecare;
-- reglarea manuală a zoom-ului și poziției pentru o încadrare precisă;
-- ajustarea luminozității și contrastului;
-- eliminarea fundalului cu AI, complet offline;
-- fundal alb, gri deschis, albastru deschis sau orice culoare din paletă;
-- previzualizarea planșei înainte de salvare;
-- încărcare prin selector de fișiere sau drag-and-drop;
-- corectarea orientării EXIF pentru fotografiile realizate cu telefonul;
-- procesare complet locală, fără încărcarea fotografiei pe internet.
+- JPEG export of 1772x1181 pixels at 300 DPI;
+- six photos of 354x472 pixels, about 3x4 cm each;
+- manual zoom and position adjustment for precise framing;
+- brightness and contrast adjustment;
+- AI background removal, fully offline;
+- white, light gray, light blue or any custom color from the palette as background;
+- sheet preview before saving;
+- loading through a file picker or drag-and-drop;
+- EXIF orientation correction for photos taken with a phone;
+- fully local processing, the photo is never uploaded to the internet.
 
-## Galerie
+## Gallery
 
 <p align="center">
   <img src="./galerie/dashboard_1.png" alt="Foto acte 3x4" width="45%">
@@ -67,38 +67,38 @@ Aplicație desktop Windows, portabilă și offline, care aranjează o fotografie
   <img src="./galerie/print_result.png" alt="Foto acte 3x4" width="45%">
 </p>
 
-## Descărcare
+## Download
 
-Descarcă arhiva pentru Windows din pagina [Releases](../../releases/latest), extrage `Foto-acte-3x4.exe` și pornește aplicația. Executabilul nu necesită instalare și nici Rust pe calculatorul utilizatorului.
+Download the Windows archive from the [Releases](../../releases/latest) page, extract `Foto-acte-3x4.exe` and start the app. The executable needs no installation and no Rust on the user's computer.
 
-Windows poate afișa avertismentul SmartScreen pentru executabile noi care nu sunt semnate digital. Verifică faptul că fișierul provine din pagina Releases a acestui repository.
+Windows may show a SmartScreen warning for new executables that are not digitally signed. Make sure the file comes from the Releases page of this repository.
 
-## Utilizare
+## Usage
 
-1. Deschide `Foto-acte-3x4.exe`.
-2. Încarcă fotografia sau trage fișierul peste fereastră.
-3. Reglează zoom-ul și poziția până când capul și bustul sunt încadrate corect.
-4. Reglează luminozitatea și contrastul, elimină și setează fundalul.
-5. Apasă **Salvează pentru print**.
-6. Printează JPEG-ul la **100% / Actual size**, fără opțiunea `Fit to page`.
+1. Open `Foto-acte-3x4.exe`.
+2. Load the photo or drag the file onto the window.
+3. Adjust the zoom and position until the head and shoulders are framed correctly.
+4. Adjust brightness and contrast, remove and set the background.
+5. Click **Save for print** (*Salvează pentru print*).
+6. Print the JPEG at **100% / Actual size**, without the `Fit to page` option.
 
-Aplicația nu detectează și nu modifică automat fața. Încadrarea manuală păstrează rezultatul previzibil și permite adaptarea la fiecare fotografie.
+The app does not detect or modify the face automatically. Manual framing keeps the result predictable and lets you adapt to each photo.
 
-Pentru înlocuirea fundalului, selectează una dintre culorile predefinite sau opțiunea **Personalizat**. Prima procesare AI poate dura câteva secunde, în funcție de procesor; toate ajustările ulterioare sunt afișate imediat.
+To replace the background, pick one of the predefined colors or the **Custom** (*Personalizat*) option. The first AI processing can take a few seconds, depending on the processor; all later adjustments are shown immediately.
 
-## Formate acceptate
+## Supported formats
 
-La intrare sunt acceptate JPEG, PNG, WebP și BMP. Rezultatul este salvat în format JPEG cu metadate de 300 DPI.
+JPEG, PNG, WebP and BMP are accepted as input. The result is saved as JPEG with 300 DPI metadata.
 
-## Dezvoltare
+## Development
 
-Este necesar [Rust](https://www.rust-lang.org/tools/install) 1.94 sau mai nou.
+[Rust](https://www.rust-lang.org/tools/install) 1.94 or newer is required.
 
 ```powershell
 cargo run
 ```
 
-Verificările locale sunt:
+Local checks:
 
 ```powershell
 cargo fmt -- --check
@@ -106,27 +106,27 @@ cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 ```
 
-## Build portabil
+## Portable build
 
-Din PowerShell rulează:
+From PowerShell run:
 
 ```powershell
 .\build-portable.ps1
 ```
 
-Executabilul independent va fi creat în `dist\Foto-acte-3x4.exe`.
+The standalone executable will be created at `dist\Foto-acte-3x4.exe`.
 
-## Publicarea unei versiuni
+## Publishing a release
 
-Workflow-ul GitHub Actions construiește și testează proiectul la fiecare push și pull request. Un tag cu forma `v1.1.2` creează automat un GitHub Release care conține arhiva Windows:
+The GitHub Actions workflow builds and tests the project on every push and pull request. A tag of the form `v1.1.2` automatically creates a GitHub Release containing the Windows archive:
 
 ```powershell
 git tag v1.1.2
 git push origin v1.1.2
 ```
 
-## Tehnologii
+## Technologies
 
-Interfața este realizată în Rust cu `eframe/egui`, procesarea imaginilor folosește crate-ul `image`, iar eliminarea fundalului folosește modelul MODNet prin runtime-ul `RTen`.
+The interface is built in Rust with `eframe/egui`, image processing uses the `image` crate, and background removal uses the MODNet model through the `RTen` runtime.
 
-Modelul AI este inclus în executabil și este distribuit conform licenței Apache-2.0. Proveniența și licența sa sunt documentate în [`assets/README.md`](assets/README.md).
+The AI model is embedded in the executable and distributed under the Apache-2.0 license. Its provenance and license are documented in [`assets/README.md`](assets/README.md).
